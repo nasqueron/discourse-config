@@ -2,8 +2,8 @@
 
 #
 # Reads a template file, and substitutes %%expressions%% by values.
-# The creditentials are fetched from a credentials remote server through SSH.
-# The configuration output file is pritned to stdout
+# The credentials are fetched from a credentials remote server through SSH.
+# The configuration output file is printed to stdout
 #
 # Usage: ./genconfig <template file> > <config file>
 #
@@ -28,17 +28,17 @@ def execute_and_display (command):
 #
 
 def get_ssh_server ():
-	"""Gets the SSH server to query creditentials"""
+	"""Gets the SSH server to query credentials"""
 	return os.getenv('SSH_SERVER', "localhost")
 
-def get_creditential (creditential_id, creditential_property):
-	"""Gets the relevant property of the specified creditential"""
+def get_credential (credential_id, credential_property):
+	"""Gets the relevant property of the specified credential"""
 	return execute_and_display([
 		"ssh",
 		get_ssh_server(),
-		"getcreditentials",
-		creditential_id,
-		creditential_property
+		"getcredentials",
+		credential_id,
+		credential_property
 	])
 
 #
@@ -64,8 +64,8 @@ def substitute_parameter (matchObj):
 	"""
 	parameter = matchObj.group(1).split(".")
 
-	if parameter[0] == "creditentials":
-		return get_creditential(parameter[1], parameter[2])
+	if parameter[0] == "credentials":
+		return get_credential(parameter[1], parameter[2])
 
 	sys.stderr.write("Unknown parameter: " + parameter[0])
 	return ""

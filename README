@@ -15,21 +15,21 @@ will provide default ones from example files.
 
 Template mechanism
 ------------------
-To avoid to store creditentials and allow a more flexible configuration, a quick
+To avoid to store credentials and allow a more flexible configuration, a quick
 template mechanism has been provided.
 
 Creditentials are stored in our DevCentral Phabricator instance, in the
 passphrase application.
 
 For example:
-- %%creditentials.17.username%% is the K17 login stored on DevCentral
-- %%creditentials.17.password%% is the K17 password  stored on DevCentral
+- %%credentials.17.username%% is the K17 login stored on DevCentral
+- %%credentials.17.password%% is the K17 password  stored on DevCentral
 
 Generate a configuration file from a template
 ----------------------------------------------
 
 A script, genconfig, allows to read a file, specified as argument, substitute
-the creditentials, and output.
+the credentials, and output.
 
 It could be in the future expanded to store in phlux other configuration values.
 
@@ -37,16 +37,16 @@ SSH requirements
 ----------------
 As we don't install tools like arc and jq in Docker host servers, a service SSH
 account has been created on a deployment server to allow to run a script to
-actually get the creditential.
+actually get the credential.
 
 The remote server has to be set in the SSH_SERVER enviroment variable. If not
 specified, it's assumed to be localhost. That eases test, if your own SSH key
 works to connect on your current account.
 
-The SSH remote account is expected to have arc, jq, our getcreditentials script
+The SSH remote account is expected to have arc, jq, our getcredentials script
 and be able to authenticate through a certificate to Phabricator. The script
 account must belongs to a group allowed to get access to the relevant
-creditentials.
+credentials.
 
 For our Nasqueron instance, this is the case for the zemke-rhyne (Zemke-Rhyne)
 account on Phabricator side, which belongs to the a specific deployment project,
