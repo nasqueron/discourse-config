@@ -4,21 +4,19 @@ Nasqueron Discourse configuration
 This folder is a configuration volume for the web container of the Nasqueron
 Discourse instance.
 
-When the container is launched, the following files are symlinked to their
-relevant locations:
+When the web container is launched, an initialization script is executed to create symbolic links for the following files to their relevant locations:
 
     * discourse.conf → /var/www/discourse/config/
     * discourse.pill → /var/www/discourse/config/
 
-If the files don't exist, the initialization script running at container launch
-will provide default ones from example files.
+If one of these files doesn't exist, the initialization script will create one with the default example files provided by the Discourse installation.
 
 Template mechanism
 ------------------
 To avoid to store credentials and allow a more flexible configuration, a quick
 template mechanism has been provided.
 
-Creditentials are stored in our DevCentral Phabricator instance, in the
+Credentials are stored in our DevCentral Phabricator instance, in the
 passphrase application.
 
 For example:
@@ -39,7 +37,7 @@ As we don't install tools like arc and jq in Docker host servers, a service SSH
 account has been created on a deployment server to allow to run a script to
 actually get the credential.
 
-The remote server has to be set in the SSH_SERVER enviroment variable. If not
+The remote server has to be set in the SSH_SERVER environment variable. If not
 specified, it's assumed to be localhost. That eases test, if your own SSH key
 works to connect on your current account.
 
@@ -64,8 +62,8 @@ Make
 ----
 To automate the process, we provide a Makefile.
 
-Add a credentials
------------------
+Add credentials
+----------------
 1. Go to Phabricator Passphrase application
    http://devcentral.nasqueron.org/passphrase/
    
