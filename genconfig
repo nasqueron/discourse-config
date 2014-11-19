@@ -1,42 +1,73 @@
 #!/usr/bin/env python
 
-import sys
+#
+# Reads a template file, and substitutes %%expressions%% by values.
+# The creditentials are fetched from a credentials remote server through SSH.
+# The configuration output file is pritned to stdout
+#
+# Usage: ./genconfig <template file> > <config file>
+#
+
+import os
 import re
 import subprocess
-import os
+import sys
 
 #
 # Helper functions
 #
 
-def get_ssh_server ():
-	return os.getenv('SSH_SERVER', "localhost")
-
-def substitute_parameters (text):
-	pattern = re.compile(r"%%(.*?)%%")
-	return re.sub(pattern, substitute_parameter, text)
-
 def execute_and_display (command):
+	"""Executes a command and return the result as a trimmed string"""
 	proc = subprocess.Popen(command, stdout=subprocess.PIPE)
 	(out, err) = proc.communicate()
 	return out.strip()
 
-def get_creditential (id, property):
+#
+# Creditentials functions
+#
+
+def get_ssh_server ():
+	"""Gets the SSH server to query creditentials"""
+	return os.getenv('SSH_SERVER', "localhost")
+
+def get_creditential (creditential_id, creditential_property):
+	"""Gets the relevant property of the specified creditential"""
 	return execute_and_display([
 		"ssh",
 		get_ssh_server(),
 		"getcreditentials",
-		id,
-		property
+		creditential_id,
+		creditential_property
 	])
 
-def substitute_parameter (m):
-	parameter = m.group(1)
-	if parameter.startswith("creditentials."):
-		creditentials = parameter.split(".")
-		return get_creditential(creditentials[1], creditentials[2])
+#
+# Templates functions
+#
 
-	sys.stderr.write("Unknown parameter: " + parameter)
+def print_config_from_template (filename):
+	"""Prints filename with config parameters substitution"""
+	with open(filename) as f:
+		for line in f:
+			print substitute_parameters(line),
+
+def substitute_parameters (text):
+	"""Substitutes parameters in text"""
+	pattern = re.compile(r"%%(.*?)%%")
+	return re.sub(pattern, substitute_parameter, text)
+
+def substitute_parameter (matchObj):
+	"""
+	Callback for the substitute regexp replacement method.
+
+	Substitutes the specified parameter
+	"""
+	parameter = matchObj.group(1).split(".")
+
+	if parameter[0] == "creditentials":
+		return get_creditential(parameter[1], parameter[2])
+
+	sys.stderr.write("Unknown parameter: " + parameter[0])
 	return ""
 
 #
@@ -47,6 +78,4 @@ if len(sys.argv) != 2:
 	print "Usage: genconfig <template file>"
 	sys.exit(1)
 
-with open(sys.argv[1]) as f:
-	for line in f:
-		print substitute_parameters(line),
+print_config_from_template(sys.argv[1])
