@@ -1,0 +1,77 @@
+Nasqueron Discourse configuration
+=================================
+
+This folder is a configuration volume for the web container of the Nasqueron
+Discourse instance.
+
+When the container is launched, the following files are symlinked to their
+relevant locations:
+
+    * discourse.conf → /var/www/discourse/config/
+    * discourse.pill → /var/www/discourse/config/
+
+If the files don't exist, the initialization script running at container launch
+will provide default ones from example files.
+
+Template mechanism
+------------------
+To avoid to store creditentials and allow a more flexible configuration, a quick
+template mechanism has been provided.
+
+Creditentials are stored in our DevCentral Phabricator instance, in the
+passphrase application.
+
+For example:
+- %%creditentials.17.username%% is the K17 login stored on DevCentral
+- %%creditentials.17.password%% is the K17 password  stored on DevCentral
+
+Generate a configuration file from a template
+----------------------------------------------
+
+A script, genconfig, allows to read a file, specified as argument, substitute
+the creditentials, and output.
+
+It could be in the future expanded to store in phlux other configuration values.
+
+SSH requirements
+----------------
+As we don't install tools like arc and jq in Docker host servers, a service SSH
+account has been created on a deployment server to allow to run a script to
+actually get the creditential.
+
+The remote server has to be set in the SSH_SERVER enviroment variable. If not
+specified, it's assumed to be localhost. That eases test, if your own SSH key
+works to connect on your current account.
+
+The SSH remote account is expected to have arc, jq, our getcreditentials script
+and be able to authenticate through a certificate to Phabricator. The script
+account must belongs to a group allowed to get access to the relevant
+creditentials.
+
+For our Nasqueron instance, this is the case for the zemke-rhyne (Zemke-Rhyne)
+account on Phabricator side, which belongs to the a specific deployment project,
+Nasqueron Docker deployment squad (#NasqDDS). The shell account is configured
+on our main development server, currently ysul.nasqueron.drake.
+
+It's expected to connect through a configured SSH agent with a key allowing
+access to such account, without requiring password or passphrase.
+
+Generate discourse.conf
+-----------------------
+./genconfig discourse.conf.tmpl > discourse.conf
+
+Make
+----
+To automate the process, we provide a Makefile.
+
+Add a credentials
+-----------------
+1. Go to Phabricator Passphrase application
+   http://devcentral.nasqueron.org/passphrase/
+   
+2. Create a credential, add it to the relevant group
+   Nasqueron Docker deployment squad
+   
+3. Click on the Allow Conduit Access link
+
+4. In relevant template files, add the credential expressions (see above)
