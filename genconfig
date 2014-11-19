@@ -8,6 +8,7 @@ import os
 #
 # Helper functions
 #
+
 def get_ssh_server ():
 	return os.getenv('SSH_SERVER', "localhost")
 
@@ -15,22 +16,25 @@ def substitute_parameters (text):
 	pattern = re.compile(r"%%(.*?)%%")
 	return re.sub(pattern, substitute_parameter, text)
 
+def execute_and_display (command):
+	proc = subprocess.Popen(command, stdout=subprocess.PIPE)
+	(out, err) = proc.communicate()
+	return out.strip()
+
+def get_creditential (id, property):
+	return execute_and_display([
+		"ssh",
+		get_ssh_server(),
+		"getcreditentials",
+		id,
+		property
+	])
+
 def substitute_parameter (m):
 	parameter = m.group(1)
 	if parameter.startswith("creditentials."):
 		creditentials = parameter.split(".")
-		proc = subprocess.Popen(
-			[
-				"ssh",
-				get_ssh_server(),
-				"getcreditentials",
-				creditentials[1],
-				creditentials[2]
-			],
-			stdout=subprocess.PIPE
-		)
-		(out, err) = proc.communicate()
-		return out.strip()
+		return get_creditential(creditentials[1], creditentials[2])
 
 	sys.stderr.write("Unknown parameter: " + parameter)
 	return ""
