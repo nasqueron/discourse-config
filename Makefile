@@ -13,5 +13,10 @@ all: discourse.conf
 discourse.conf:
 	@SSH_SERVER=${SSH_SERVER} ./genconfig discourse.conf.tmpl > discourse.conf
 
+git-update:
+	git pull
+
 clean:
 	@rm -f discourse.conf
+
+update: clean git-update all
