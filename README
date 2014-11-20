@@ -21,7 +21,7 @@ passphrase application.
 
 For example:
 - %%credentials.17.username%% is the K17 login stored on DevCentral
-- %%credentials.17.password%% is the K17 password  stored on DevCentral
+- %%credentials.17.password%% is the K17 password stored on DevCentral
 
 Generate a configuration file from a template
 ----------------------------------------------
