@@ -43,7 +43,7 @@ works to connect on your current account.
 
 The SSH remote account is expected to have arc, jq, our getcredentials script
 and be able to authenticate through a certificate to Phabricator. The script
-account must belongs to a group allowed to get access to the relevant
+account must belong to a group allowed to get access to the relevant
 credentials.
 
 For our Nasqueron instance, this is the case for the zemke-rhyne (Zemke-Rhyne)
